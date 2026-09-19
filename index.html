@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Bank Foundation | Education Program Monitoring & Impact Assessment</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sbf: {
+              green: '#008752',
+              greendark: '#00683f',
+              greenlight: '#e6f5ee',
+              navy: '#002B49',
+              navylight: '#0d3d63',
+              navydark: '#001f35',
+              gold: '#f59e0b',
+              blue: '#0284c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Application Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased">
+
+  <!-- ==================================================== -->
+  <!-- TOP NAVIGATION BAR                                   -->
+  <!-- ==================================================== -->
+  <header class="bg-[#002B49] text-white sticky top-0 z-40 shadow-md border-b border-white/10 no-print">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <!-- Brand Identity -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="App.switchModule('overview')">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#008752] to-[#00aa66] flex items-center justify-center text-white font-black text-xl shadow-inner border border-emerald-400/40">
+            <i class="fa-solid fa-graduation-cap text-lg sm:text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-black tracking-tight text-base sm:text-lg leading-tight uppercase text-white">
+                SECURITY BANK <span class="text-emerald-400 font-normal">FOUNDATION</span>
+              </span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-emerald-200 tracking-wide font-serif italic">
+              Better Education. Brighter Futures.
+            </p>
+          </div>
+        </div>
+
+        <!-- Center: Search & Quick Presets -->
+        <div class="hidden xl:flex items-center flex-1 max-w-md mx-8">
+          <div class="relative w-full">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </span>
+            <input 
+              id="globalSearchInput" 
+              type="text" 
+              placeholder="Search schools, teachers, disaster reports, scholars..." 
+              class="w-full pl-9 pr-4 py-1.5 text-xs bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:bg-white/20 transition"
+            >
+          </div>
+        </div>
+
+        <!-- Right: Role Switcher & User Tools (Module 9 & 8) -->
+        <div class="flex items-center gap-3 sm:gap-4">
+          
+          <!-- Role Switcher (Module 9: Controls who can view, submit, or modify) -->
+          <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
+            <span class="text-[11px] text-slate-300 hidden md:inline">Role:</span>
+            <select id="roleSelector" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
+              <option value="Administrator" class="text-slate-900">Administrator (All Access)</option>
+              <option value="Foundation Staff" class="text-slate-900">Foundation Staff</option>
+              <option value="School Principal" class="text-slate-900">School Principal</option>
+              <option value="Teacher / Master Trainer" class="text-slate-900">Teacher / Master Trainer</option>
+              <option value="Scholar" class="text-slate-900">Scholar</option>
+            </select>
+          </div>
+
+          <!-- Notification Bell (Module 8) -->
+          <button 
+            onclick="App.switchModule('notifications')" 
+            class="relative p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+            title="Notifications & Alerts Center"
+          >
+            <i class="fa-regular fa-bell text-sm"></i>
+            <span id="notifBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-[10px] font-bold text-white rounded-full flex items-center justify-center">3</span>
+          </button>
+
+          <!-- Quick Report Button -->
+          <button 
+            onclick="App.generateReport('consolidated')" 
+            class="hidden sm:flex items-center gap-1.5 bg-[#008752] hover:bg-[#00683f] text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition"
+          >
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Export Report</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================================================== -->
+  <!-- ANSWER KEY QUESTIONS SMART STRIP                      -->
+  <!-- Bottom section of infographic: 7 key questions        -->
+  <!-- ==================================================== -->
+  <section class="bg-slate-100 border-b border-slate-200 py-2.5 px-4 sm:px-6 lg:px-8 no-print shadow-sm">
+    <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-700 shrink-0">
+        <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+          <i class="fa-solid fa-bolt"></i>
+        </span>
+        <span class="uppercase tracking-wider text-slate-800">Answer Key Questions:</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-1.5 text-xs">
+        <button onclick="App.answerKeyQuestion('q1_schools_repair')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-screwdriver-wrench text-amber-500 text-[10px]"></i> Which schools need repair?
+        </button>
+        <button onclick="App.answerKeyQuestion('q2_disaster_affected')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-triangle-exclamation text-red-500 text-[10px]"></i> Affected by recent disasters?
+        </button>
+        <button onclick="App.answerKeyQuestion('q3_teachers_improvement')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-arrow-trend-up text-emerald-600 text-[10px]"></i> Largest teacher improvement?
+        </button>
+        <button onclick="App.answerKeyQuestion('q4_teachers_cascaded')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-chalkboard-user text-purple-600 text-[10px]"></i> Teachers cascaded training?
+        </button>
+        <button onclick="App.answerKeyQuestion('q5_cascade_reach')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-users text-blue-600 text-[10px]"></i> Reached through cascading?
+        </button>
+        <button onclick="App.answerKeyQuestion('q6_scholar_employment')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-user-graduate text-teal-600 text-[10px]"></i> % Scholars employed?
+        </button>
+        <button onclick="App.answerKeyQuestion('q7_scholar_updates_needed')" class="question-pill bg-white hover:bg-[#002B49] text-slate-700 hover:text-white px-2.5 py-1 rounded-md border border-slate-200 font-medium transition shadow-xs flex items-center gap-1">
+          <i class="fa-solid fa-clock-rotate-left text-rose-500 text-[10px]"></i> Scholar records needing update?
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- MAIN LAYOUT: SIDEBAR + CONTENT                       -->
+  <!-- ==================================================== -->
+  <div class="flex-1 flex max-w-[1600px] w-full mx-auto">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 xl:w-72 bg-white border-r border-slate-200 p-4 shrink-0 flex flex-col justify-between hidden md:flex no-print">
+      <div>
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-2">
+          Program Management
+        </div>
+
+        <nav class="space-y-1">
+          <!-- Overview / KPI Dashboard -->
+          <a href="#" data-module="overview" class="nav-tab active flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold">
+            <span class="w-6 h-6 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center text-[11px]">
+              <i class="fa-solid fa-chart-pie"></i>
+            </span>
+            <span>Dashboard & Analytics</span>
+          </a>
+
+          <!-- Module 1 -->
+          <a href="#" data-module="schools" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-blue-100 text-blue-800 flex items-center justify-center text-[11px] font-bold">1</span>
+            <span>School Building Condition</span>
+          </a>
+
+          <!-- Module 2 -->
+          <a href="#" data-module="teachers" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center text-[11px] font-bold">2</span>
+            <span>Teacher Competency</span>
+          </a>
+
+          <!-- Module 3 -->
+          <a href="#" data-module="disaster" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-amber-100 text-amber-800 flex items-center justify-center text-[11px] font-bold">3</span>
+            <span>Disaster Damage Reporting</span>
+          </a>
+
+          <!-- Module 4 -->
+          <a href="#" data-module="cascade" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-purple-100 text-purple-800 flex items-center justify-center text-[11px] font-bold">4</span>
+            <span>Teacher Learning Cascade</span>
+          </a>
+
+          <!-- Module 5 -->
+          <a href="#" data-module="scholars" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-teal-100 text-teal-800 flex items-center justify-center text-[11px] font-bold">5</span>
+            <span>Scholar Tracer System</span>
+          </a>
+
+          <div class="pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3">
+            Operations & Governance
+          </div>
+
+          <!-- Intervention Prioritization -->
+          <a href="#" data-module="prioritization" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-red-100 text-red-800 flex items-center justify-center text-[11px]">
+              <i class="fa-solid fa-bullseye"></i>
+            </span>
+            <span>Intervention Prioritization</span>
+          </a>
+
+          <!-- Module 7 -->
+          <a href="#" data-module="reporting" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-indigo-100 text-indigo-800 flex items-center justify-center text-[11px] font-bold">7</span>
+            <span>Automated Reporting</span>
+          </a>
+
+          <!-- Module 8 -->
+          <a href="#" data-module="notifications" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-amber-100 text-amber-800 flex items-center justify-center text-[11px] font-bold">8</span>
+            <span>Notifications & Alerts</span>
+          </a>
+
+          <!-- Module 9 -->
+          <a href="#" data-module="users" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-blue-100 text-blue-800 flex items-center justify-center text-[11px] font-bold">9</span>
+            <span>User & Access Mgmt</span>
+          </a>
+
+          <!-- Module 10 -->
+          <a href="#" data-module="repository" class="nav-tab flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            <span class="w-6 h-6 rounded bg-teal-100 text-teal-800 flex items-center justify-center text-[11px] font-bold">10</span>
+            <span>Data Repository</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Status Indicator Matrix Reference Box (from bottom of infographic) -->
+      <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px]">
+        <div class="font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center justify-between">
+          <span>Status Matrix</span>
+          <i class="fa-solid fa-palette text-slate-400"></i>
+        </div>
+
+        <div class="space-y-2 text-slate-600">
+          <div>
+            <span class="font-semibold block text-slate-700 text-[10px] uppercase">School Facility</span>
+            <div class="grid grid-cols-2 gap-1 text-[10px] mt-0.5">
+              <span><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Good</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Monitoring</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-orange-500 mr-1"></span>Repair</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-1"></span>Critical</span>
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200">
+            <span class="font-semibold block text-slate-700 text-[10px] uppercase">Teacher Competency</span>
+            <div class="grid grid-cols-2 gap-1 text-[10px] mt-0.5">
+              <span><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Improved</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Maintained</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-orange-500 mr-1"></span>Minimal</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-1"></span>Follow-up</span>
+            </div>
+          </div>
+
+          <div class="pt-1.5 border-t border-slate-200">
+            <span class="font-semibold block text-slate-700 text-[10px] uppercase">Disaster Damage</span>
+            <div class="grid grid-cols-2 gap-1 text-[10px] mt-0.5">
+              <span><span class="inline-block w-2 h-2 rounded-full bg-teal-500 mr-1"></span>Minor</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Moderate</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-orange-500 mr-1"></span>Major</span>
+              <span><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-1"></span>Critical</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Dynamic Content Canvas -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+      <div id="mainContentArea">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODALS                                               -->
+  <!-- ==================================================== -->
+
+  <!-- Modal 1: New School Condition Assessment -->
+  <div id="schoolModal" class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-900">New School Facility Condition Form</h3>
+        <button onclick="App.closeModal('schoolModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="App.saveNewSchoolAssessment(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">School Name</label>
+          <input id="newSchoolName" type="text" required placeholder="e.g. Angeles City National High School" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">DepEd Division</label>
+            <input id="newSchoolDivision" type="text" required placeholder="e.g. Pampanga" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Condition Status</label>
+            <select id="newSchoolStatus" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none font-semibold">
+              <option value="Good">Good</option>
+              <option value="Needs Monitoring">Needs Monitoring</option>
+              <option value="Needs Repair">Needs Repair</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Structural Health Score (0 - 100)</label>
+          <input id="newSchoolRating" type="number" min="1" max="100" value="85" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none font-bold">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Inspection Notes & Repair Needs</label>
+          <textarea id="newSchoolNeeds" rows="3" placeholder="Specify roof, electrical, or structural requirements..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+        </div>
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="App.closeModal('schoolModal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#008752] text-white rounded-lg font-semibold hover:bg-[#00683f] shadow">Save Inspection</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Submit Disaster Damage Report -->
+  <div id="disasterModal" class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation text-red-600"></i> Log Calamity Damage Incident
+        </h3>
+        <button onclick="App.closeModal('disasterModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="App.saveNewDisasterReport(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Disaster / Calamity Name</label>
+          <input id="newDisasterName" type="text" required placeholder="e.g. Typhoon Enteng" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Affected School</label>
+            <select id="newDisasterSchool" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none font-semibold">
+              <option value="Tuguegarao City Science High School">Tuguegarao City Science HS</option>
+              <option value="San Fernando Elementary School">San Fernando Elementary</option>
+              <option value="Tacloban City National High School">Tacloban City NHS</option>
+              <option value="Pasay City West High School">Pasay City West HS</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Damage Severity</label>
+            <select id="newDisasterSeverity" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none font-semibold">
+              <option value="Minor">Minor</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Major">Major</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Estimated Rehabilitation Cost (PHP)</label>
+          <input id="newDisasterCost" type="number" step="1000" placeholder="e.g. 350000" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none font-mono font-bold">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Physical Damage Summary</label>
+          <textarea id="newDisasterDesc" rows="3" placeholder="Describe roof tearing, mud silt, structural cracks..." required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-red-500 outline-none"></textarea>
+        </div>
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="App.closeModal('disasterModal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-rose-700 text-white rounded-lg font-semibold hover:bg-rose-800 shadow">Submit Calamity Docket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Log Cascade Echo Session -->
+  <div id="cascadeModal" class="modal-overlay fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-900">Record Teacher Cascade Echo Session</h3>
+        <button onclick="App.closeModal('cascadeModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="App.saveNewCascadeSession(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Cascade Workshop Title</label>
+          <input id="newCascadeTitle" type="text" required placeholder="e.g. Division LAC on Modern STEM Pedagogies" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Lead Master Trainer</label>
+          <input id="newCascadeTrainer" type="text" required placeholder="e.g. Maria Consolacion Santos" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-purple-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Peer Teachers Trained</label>
+            <input id="newCascadeTeachers" type="number" min="1" required placeholder="e.g. 25" class="w-full border rounded-lg p-2.5 font-bold outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Est. Student Impact</label>
+            <input id="newCascadeImpact" type="number" min="1" required placeholder="e.g. 1000" class="w-full border rounded-lg p-2.5 font-bold outline-none">
+          </div>
+        </div>
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="App.closeModal('cascadeModal')" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-purple-700 text-white rounded-lg font-semibold hover:bg-purple-800 shadow">Save Cascade Multiplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: School Facility Deep Dive Modal -->
+  <div id="schoolDetailModal" class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-base font-bold text-slate-900">School Facility Condition Portfolio</h3>
+        <button onclick="App.closeModal('schoolDetailModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div id="schoolDetailContent"></div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Automated Report Preview & Print -->
+  <div id="reportPreviewModal" class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-slate-200 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-3 no-print">
+        <span class="text-xs font-semibold text-slate-500">Document Preview</span>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="bg-[#008752] hover:bg-[#00683f] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-print"></i> Print to PDF
+          </button>
+          <button onclick="App.closeModal('reportPreviewModal')" class="text-slate-400 hover:text-slate-600 p-1.5"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+      </div>
+      <div id="reportPreviewContent" class="p-2"></div>
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
